@@ -1,0 +1,22 @@
+body{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+table,th,td{
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+span{
+    color: red;
+    display: block;
+}
+.first{
+    color:black;
+}
+
