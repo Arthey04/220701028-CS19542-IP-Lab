@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="form">
+        <h2>Register</h2>
+        <form id="registrationForm" action="">
+           <div>
+            <label for="reg">Register No:</label>
+            <input id="reg" type="text" placeholder="" >
+            <div class="error"></div>
+           </div>
+            <div>
+            <label for="name">Name:</label>
+            <input id="name" type="text" placeholder="" >
+            <div class="error"></div>
+           </div>
+           <div>
+            <label for="year">Year:</label>
+            <select name="year" id="year" >
+                <option value="1">1st year</option>
+                <option value="2">2nd year</option>
+                <option value="3">3rd year</option>
+                <option value="4">4th year</option>
+                
+            </select>
+            <div class="error"></div>
+            </div>
+            <div>
+            <label for="email">Email:</label>
+            <input id="email" type="text" placeholder="" >
+            <div class="error"></div>
+           </div>
+           <div>
+            <label for="sem">Semester:</label>
+            <select name="sem" id="sem" >
+                <option value="sem1">sem 1</option>
+                <option value="sem2"> sem 2</option>
+                <option value="sem3">sem </option>
+                <option value="sem4">sem 4</option>
+                
+            </select>    
+            <div class="error"></div>     
+          </div>
+           <div>
+            <label for="core/pe/oe">Core/OE/PE:</label>
+            <select name="core/pe/oe" id="core/pe/oe">
+            <option value="core">Core</option>
+            <option value="pe"> Professional Elecive</option>
+            <option value="oe">Open Elective</option>
+            
+            </select>
+            <div class="error"></div>
+           </div>
+           <div>
+            <label for="subcode">Subject Code:</label>
+            <input id="subcode" type="text" placeholder="" >
+            <div class="error"></div>
+           </div>
+           <div>
+            <label for="subname">Subject Name:</label>
+            <input id="subname" type="text" placeholder="" >
+            <div class="error"></div>
+           </div>
+           <div>
+            <label for="credit">Credit:</label>
+            <input id="credit" type="text" placeholder="" >
+            <div class="error"></div>
+           </div>
+           <div>
+               <label for="phone">Phone no:</label>
+               <input type="text" id="phone" placleholder="phone no" >
+               <div class="error"></div>
+           </div>
+           <div class="gender-group">
+                 <label for="">gender:</label>
+                <input type="radio" name="gender" id="female" value="female" checked></input>
+                <label for="female">female</label>
+                <input type="radio" name="gender" id="male" value="female"></input>
+                <label for="male">male</label>
+                <div class="error"></div>
+           </div>
+           <div>
+              <label for="">Department:</label>
+              <select name="qualification" id="qualification" >
+                 <option value="cse">CSE</option>
+                 <option value="ece">ECE</option>
+                 <option value="bio tech">Bio Tech</option>
+                 <option value="eee">EEE</option>
+              </select>
+              <div class="error"></div>
+           </div>
+           <div id="btn">
+               <button type="submit" onclick="handle(event)">Submit</button>
+           </div>
+         
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
