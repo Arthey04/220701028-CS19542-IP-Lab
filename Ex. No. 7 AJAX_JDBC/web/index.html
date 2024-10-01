@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>Student Registration</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <script>
+            function getStudentDetails(regNo)
+            {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange=function()
+                {
+                    if(this.readyState==4 && this.status==200)
+                    {
+                        document.getElementById("studentDetails").innerHTML=this.responseText;
+                    }
+                }
+                xhttp.open("GET","NewServlet?reg_no="+regNo,true);
+                xhttp.send();
+            }
+        </script>
+    </head>
+    <body>
+        <h2>Select a Student Registration Number</h2>
+        <select name="reg_no" onchange="getStudentDetails(this.value)">
+            <option value="">Select a reg-no</option>
+            <option value="101">101</option>
+            <option value="102">102</option>
+            <option value="103">103</option>
+        </select>
+        
+        <h3>Student Details:</h3>
+        <div id="studentDetails"></div>
+       
+    </body>
+    
+</html>
