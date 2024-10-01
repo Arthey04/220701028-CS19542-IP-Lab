@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        
+    <h1>Student Name Suggestions</h1>
+    <p>Start typing a student name:</p>
+
+    <input type="text" id="studentName" onkeyup="getSuggestions()" placeholder="Enter student name">
+    <div id="suggestion-box"></div>
+    <script>
+        function getSuggestions(){
+            const input=document.getElementById('studentName').value;
+            if(input.length==0)
+            {
+                document.getElementById('suggestion-box').innerHTML = ''; 
+                return;
+            }
+             const xhr = new XMLHttpRequest();
+        xhr.open("GET", "NewServlet?query=" + input, true); 
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById('suggestion-box').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+        }
+    </script>
+    </body>
+</html>
