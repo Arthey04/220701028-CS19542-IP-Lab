@@ -7,6 +7,7 @@
 
 
 
+
 include 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -14,24 +15,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $atype = $_POST['atype'];
     $balance = $_POST['balance'];
 
-    $ano = str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
-
-    $checkAccountSql = "SELECT * FROM account WHERE ano = ?";
+    $maxRetries = 10;
+    $retryCount = 0;
     $accountExists = false;
 
-    while (!$accountExists) {
+ 
+    do {
+        $ano = str_pad(mt_rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
+
+        
+        $checkAccountSql = "SELECT * FROM account WHERE ano = ?";
         if ($stmt = $conn->prepare($checkAccountSql)) {
             $stmt->bind_param("s", $ano);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows == 0) {
-                $accountExists = true; // Ensure account number is unique
+                $accountExists = true; 
             } else {
-                $ano = str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
+                $retryCount++;
             }
         }
-    }
+
+        if ($retryCount >= $maxRetries) {
+            echo "<script>alert('Error: Unable to generate a unique account number. Please try again later.');</script>";
+            exit;
+        }
+    } while (!$accountExists);
 
     $sql = "INSERT INTO customer (cname) VALUES (?)";
     if ($stmt = $conn->prepare($sql)) {
@@ -39,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
             $cid = $stmt->insert_id; 
 
+            
             $insertAccountSql = "INSERT INTO account (cid, ano, atype, balance) VALUES (?, ?, ?, ?)";
             if ($stmt = $conn->prepare($insertAccountSql)) {
                 $stmt->bind_param("issd", $cid, $ano, $atype, $balance);
