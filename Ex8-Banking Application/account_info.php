@@ -7,53 +7,49 @@
 
 
 
+include 'db.php';
 
-?>
-   <?php
-include 'db.php'; 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $cname = $_POST['cname'];
+    $atype = $_POST['atype'];
+    $balance = $_POST['balance'];
 
+    $ano = str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
 
-$accountInfo = ""; 
-$customerDetails = "";
+    $checkAccountSql = "SELECT * FROM account WHERE ano = ?";
+    $accountExists = false;
 
-if (isset($_GET['cid'])) {
-    $cid = $_GET['cid'];
+    while (!$accountExists) {
+        if ($stmt = $conn->prepare($checkAccountSql)) {
+            $stmt->bind_param("s", $ano);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-    
-    $sql = "SELECT cid, ano, atype, balance FROM account WHERE cid = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $cid); 
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        
-        if ($result->num_rows > 0) {
-            if ($row = $result->fetch_assoc()) {
-                $accountInfo .= "Account Number: " . htmlspecialchars($row['ano']) . "<br>";
-                $accountInfo .= "Account Type: " . ($row['atype'] == 'S' ? 'Savings' : 'Current') . "<br>";
-                $accountInfo .= "Balance: $" . htmlspecialchars($row['balance']) . "<br><br>";
+            if ($result->num_rows == 0) {
+                $accountExists = true; // Ensure account number is unique
+            } else {
+                $ano = str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
             }
-        } else {
-            $accountInfo .= "No account found for customer ID: " . htmlspecialchars($cid);
         }
     }
 
-    
-     
-    $sql = "SELECT cid, cname FROM customer WHERE cid = ?";
+    $sql = "INSERT INTO customer (cname) VALUES (?)";
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $cid);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $stmt->bind_param("s", $cname);
+        if ($stmt->execute()) {
+            $cid = $stmt->insert_id; 
 
-       
-        if ($result->num_rows > 0) {
-            if ($row = $result->fetch_assoc()) {
-                $customerDetails .= "CID: " . htmlspecialchars($row['cid']) . "<br>";
-                $customerDetails .= "Cname: " . htmlspecialchars($row['cname']) . "<br>";
+            $insertAccountSql = "INSERT INTO account (cid, ano, atype, balance) VALUES (?, ?, ?, ?)";
+            if ($stmt = $conn->prepare($insertAccountSql)) {
+                $stmt->bind_param("issd", $cid, $ano, $atype, $balance);
+                if ($stmt->execute()) {
+                    echo "<script>alert('Customer and account information inserted successfully! Customer ID: " . htmlspecialchars($cid) . ", Account Number: " . htmlspecialchars($ano) . "');</script>";
+                } else {
+                    echo "<script>alert('Error inserting account information: " . $stmt->error . "');</script>";
+                }
             }
         } else {
-            $customerDetails .= "No customer found for customer ID: " . htmlspecialchars($cid);
+            echo "<script>alert('Error inserting customer information: " . $stmt->error . "');</script>";
         }
     }
 }
@@ -64,41 +60,25 @@ if (isset($_GET['cid'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Info</title>
+    <title>Insert Customer and Account Info</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-   
-        
-        <button onClick="toggleCustomerInfo()">
-            <i class="fa-solid fa-user"></i> Show Customer Info
-        </button>
-     
-   
-    
-    <div id="customerInfo" style="margin-top: 20px;">
-       <?php
-      echo $customerDetails;
-        ?>
-    </div>
-      <div id="accountInfo" style="margin-top: 20px;">
-        <?php
-       
-        echo $accountInfo;
-        ?>
-    </div>
-    <script>
-        function toggleCustomerInfo()
-        {
-        customerInfoDiv=document.getElementById('customerInfo');
-        if (customerInfoDiv.style.display === 'none' || customerInfoDiv.style.display === '') {
-                customerInfoDiv.style.display = 'block'; 
-        } else {
-                customerInfoDiv.style.display = 'none'; 
-        }
-    }
-    </script>
+    <h1>Insert Customer and Account Information</h1>
+    <form method="POST" action="">
+        <label for="cname">Customer Name:</label>
+        <input type="text" id="cname" name="cname" required><br>
+
+        <label for="atype">Account Type:</label>
+        <select id="atype" name="atype" required>
+            <option value="S">Savings</option>
+            <option value="C">Current</option>
+        </select><br>
+
+        <label for="balance">Balance:</label>
+        <input type="number" id="balance" name="balance" step="0.01" required><br>
+
+        <button type="submit">Insert</button>
+    </form>
 </body>
 </html>
- 
